@@ -1,0 +1,95 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+static def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+ def version= 1.0
+
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.koma.multichannel"
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            //signingConfig signingConfigs.debugRelease
+            buildConfigField "boolean", "IsDebug", "true"
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            buildConfigField "boolean", "IsDebug", "false"
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    signingConfigs {
+        zqyRelease {
+            storeFile file ("../key/zqy.jks")
+            storePassword "zqyzqy"
+            keyAlias "zqy"
+            keyPassword "zqyzqy"
+        }
+        ljRelease {
+            storeFile file("../key/lj.jks")
+            storePassword "ljljlj"
+            keyAlias "lj"
+            keyPassword "ljljlj"
+        }
+        debugRelease {
+            storeFile file("../key/debug.jks")
+            storePassword "123456"
+            keyAlias "key0"
+            keyPassword "123456"
+        }
+    }
+    flavorDimensions "app"
+    productFlavors {
+        zqy {
+            applicationId "com.zqy.app"
+            signingConfig signingConfigs.zqyRelease
+            buildConfigField "String", "testUrl", '"https://www.zqytest.com"'
+            buildConfigField "String", "onlineUrl", '"https://www.zqyonline.com"'
+
+        }
+        lj {
+            applicationId "com.lj.app"
+            signingConfig signingConfigs.ljRelease
+            buildConfigField "String", "testUrl", '"https://www.ljtest.com"'
+            buildConfigField "String", "onlineUrl", '"https://www.ljonline.com"'
+
+        }
+    }
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+
+
+                outputFileName ="${variant.productFlavors[0].name}-v${version}-${releaseTime()}.apk"
+            }
+        }
+
+
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
