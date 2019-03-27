@@ -1,0 +1,61 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 28
+
+
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "NetIsDebug", "true"
+        }
+        release {
+            minifyEnabled false
+            buildConfigField "boolean", "NetIsDebug", "false"
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    //flavorDimensions要和module.gradle下的一致，这里默认写的app，许多也写的default
+    flavorDimensions "app"
+    productFlavors {
+        //AppUrl在下面2个渠道不同的值，保证标识一样，都叫AppUrl
+        //AppTestUrl在下面2个渠道不同的值，保证标识一样，都叫AppTestUrl
+        // 一般我们要分别测试环境和线上环境，AppUrl的值是线上，AppTestUrl的值是线下
+        yxm {
+            buildConfigField "String", "AppUrl", '"https://www.yxm.com"'
+            buildConfigField "String", "AppTestUrl", '"https://www.yxmtest.com"'
+
+
+        }
+        lj {
+            buildConfigField "String", "AppUrl", '"https://www.lj.com"'
+            buildConfigField "String", "AppTestUrl", '"https://www.ljtest.com"'
+
+
+        }
+
+    }
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
